@@ -176,7 +176,9 @@ def assign_thermal_weights_and_collapse(
     Runs completely in-memory in ~20ms using STRtree.
     """
     G = nx.DiGraph()
-    if hasattr(multi_g, 'graph'):
+    if multi_g is None or not hasattr(multi_g, 'nodes'):
+        return G
+    if hasattr(multi_g, 'graph') and multi_g.graph is not None:
         G.graph.update(multi_g.graph)
     
     for n, data in multi_g.nodes(data=True):

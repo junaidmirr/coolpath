@@ -10,6 +10,10 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
+import warnings
+warnings.filterwarnings("ignore", message=".*Automatic function calling.*")
+warnings.filterwarnings("ignore", message=".*AFC.*")
+
 GEMINI_MODELS = [
     "gemini-flash-lite-latest",
     "gemini-2.5-flash-lite",

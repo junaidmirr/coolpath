@@ -107,7 +107,9 @@ def _compute_routes_blocking(mission: Mission, offsets: List[int], provider, act
     metabolic_factor = activity_cfg["metabolic_factor"]
 
     multi_g = download_street_network(mission.origin, mission.destination, network_type=network_type)
-    
+    if multi_g is None or not hasattr(multi_g, "nodes") or len(multi_g.nodes) == 0:
+        return {off: [] for off in offsets}
+
     origin_node = ox.distance.nearest_nodes(multi_g, X=mission.origin.lng, Y=mission.origin.lat)
     dest_node = ox.distance.nearest_nodes(multi_g, X=mission.destination.lng, Y=mission.destination.lat)
     
