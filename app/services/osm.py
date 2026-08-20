@@ -121,7 +121,7 @@ def build_corridor_fallback_graph(origin: Coordinate, destination: Coordinate, b
                     multi_g.add_edge(curr, nbr, 0, length=dist, travel_time=tt, walk_time=tt)
                     
     logger.info(f"Built resilient fallback street grid ({len(multi_g.nodes)} nodes, {len(multi_g.edges)} edges)")
-    return multi_g
+    ox.settings.requests_timeout = 2
 
 def download_street_network(origin: Coordinate, destination: Coordinate, network_type: str = "walk"):
     """
@@ -139,7 +139,7 @@ def download_street_network(origin: Coordinate, destination: Coordinate, network
         except Exception as e:
             logger.warning(f"Error cropping master graph: {e}")
 
-    # 2. Try online Overpass API download
+    # 2. Try online Overpass API download with short timeout
     north = max(origin.lat, destination.lat) + 0.004
     south = min(origin.lat, destination.lat) - 0.004
     east = max(origin.lng, destination.lng) + 0.004
@@ -150,13 +150,14 @@ def download_street_network(origin: Coordinate, destination: Coordinate, network
     for endpoint in OVERPASS_ENDPOINTS:
         try:
             ox.settings.overpass_url = endpoint
-            return ox.graph_from_polygon(bbox_poly, network_type=network_type)
-        except Exception as e:
-            logger.warning(f"Overpass mirror {endpoint} failed: {e}. Trying next...")
+            g = ox.graph_from_polygon(bbox_poly, network_type=network_type)
+            if len(g.nodes) > 0:
+                return g
+        except Exception:
             continue
             
-    # 3. Last-resort natural fallback grid
-    logger.warning("All sources failed. Using resilient local street grid fallback.")
+    # 3. Resilient local street grid fallback
+    logger.info("Using resilient local street grid fallback.")
     return build_corridor_fallback_graph(origin, destination)
 
 # Backward-compatible alias
