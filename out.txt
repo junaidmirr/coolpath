@@ -1,0 +1,8 @@
+Starting optimization simulation...
+
+--- DECISION ENGINE RESULT ---
+Decision: WAIT
+Wait Minutes: 30
+Reduction: 0.3%
+Fastest TEI: 54.7
+Recommended TEI: 54.6
