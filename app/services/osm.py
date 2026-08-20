@@ -121,7 +121,7 @@ def build_corridor_fallback_graph(origin: Coordinate, destination: Coordinate, b
                     multi_g.add_edge(curr, nbr, 0, length=dist, travel_time=tt, walk_time=tt)
                     
     logger.info(f"Built resilient fallback street grid ({len(multi_g.nodes)} nodes, {len(multi_g.edges)} edges)")
-    ox.settings.requests_timeout = 2
+    return multi_g
 
 def download_street_network(origin: Coordinate, destination: Coordinate, network_type: str = "walk"):
     """
